@@ -31,7 +31,7 @@ export interface AnimationConfig {
   speed: number
   loop: boolean
   delayBetweenChars: number
-  penTipStyle: 'none' | 'dot' | 'pen'
+  penTipStyle: 'none' | 'feather' | 'pen'
 }
 
 export const MAX_TEXT_LENGTH = 30

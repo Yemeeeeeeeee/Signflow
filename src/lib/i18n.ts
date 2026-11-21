@@ -12,7 +12,7 @@ export type StringKey = keyof typeof en
 const en = {
   'lang.switch': 'Switch language',
 
-  'header.tagline': 'Text → SVG → handwriting animation',
+  'header.tagline': 'Signatures in motion',
   'header.licenseWarning':
     '“{name}” has an unknown licence. Confirm commercial-use rights before shipping anything exported with it.',
 
@@ -43,7 +43,7 @@ const en = {
   'anim.once': 'Once',
   'anim.penTip': 'Pen tip',
   'anim.penTip.none': 'None',
-  'anim.penTip.dot': 'Dot',
+  'anim.penTip.feather': 'Feather',
   'anim.penTip.pen': 'Pen',
 
   'preview.play': 'Play',
@@ -79,7 +79,7 @@ const en = {
 const zh: Record<StringKey, string> = {
   'lang.switch': '切换语言',
 
-  'header.tagline': '文字 → SVG → 手写动画',
+  'header.tagline': '让笔迹优雅流动',
   'header.licenseWarning': '“{name}”的授权信息未知。在商用之前请先确认其商用授权范围。',
 
   'text.label': '你的名字',
@@ -109,7 +109,7 @@ const zh: Record<StringKey, string> = {
   'anim.once': '一次',
   'anim.penTip': '笔尖',
   'anim.penTip.none': '无',
-  'anim.penTip.dot': '圆点',
+  'anim.penTip.feather': '羽毛',
   'anim.penTip.pen': '钢笔',
 
   'preview.play': '播放',

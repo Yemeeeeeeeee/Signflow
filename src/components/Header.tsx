@@ -1,4 +1,3 @@
-import { PenLine } from 'lucide-react'
 import { findFont } from '../data/fonts'
 import { useT } from '../lib/i18n'
 import { useSignatureStore } from '../store/useSignatureStore'
@@ -13,9 +12,16 @@ export function Header() {
   return (
     <header className="sticky top-0 z-20 shrink-0 border-b border-line bg-canvas/95 backdrop-blur-sm">
       <div className="flex h-11 items-center gap-2 px-4">
-        <PenLine size={15} aria-hidden className="text-ink" />
+        <img
+          src="/logo.png"
+          alt=""
+          aria-hidden="true"
+          width={24}
+          height={24}
+          className="h-6 w-6 rounded-md object-contain"
+        />
         <h1 className="font-mono text-[11px] font-medium uppercase tracking-tight text-ink">
-          SignatureFlow
+          Signflow
         </h1>
 
         <span className="h-3.5 w-px bg-line/60" aria-hidden />

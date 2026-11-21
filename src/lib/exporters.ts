@@ -21,7 +21,7 @@ function fileName(scene: ExportScene, extension: string) {
     .replace(/[^A-Za-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .toLowerCase()
-  return `${slug ? `signatureflow-${slug}` : 'signatureflow'}.${extension}`
+  return `${slug ? `signflow-${slug}` : 'signflow'}.${extension}`
 }
 
 function download(blob: Blob, filename: string) {
@@ -51,12 +51,31 @@ interface Painter {
   drawFrame: (elapsedMs: number) => void
 }
 
+const TIP_IMAGE_SCALE = 1.1
+
+function loadTipImage(scene: ExportScene): Promise<HTMLImageElement | null> {
+  const style = scene.animation.penTipStyle
+  if (style === 'none') return Promise.resolve(null)
+
+  return new Promise((resolve, reject) => {
+    const image = new Image()
+    image.onload = () => resolve(image)
+    image.onerror = () => reject(new Error('The selected pen tip image could not be loaded.'))
+    image.src = style === 'pen' ? '/pen-tip.png' : '/feather-tip.png'
+  })
+}
+
 /**
  * Draws the signature into an offscreen canvas.
  * `Number.POSITIVE_INFINITY` renders the finished signature, any other value renders
  * the reveal at that point in time by clipping each glyph to its own progress.
  */
-function createPainter(scene: ExportScene, pixelRatio: number, opaqueBackground: boolean): Painter {
+function createPainter(
+  scene: ExportScene,
+  pixelRatio: number,
+  opaqueBackground: boolean,
+  tipImage: HTMLImageElement | null = null,
+): Painter {
   const { signature, run, fit } = scene
   const canvas = document.createElement('canvas')
   canvas.width = Math.round(signature.canvasWidth * pixelRatio)
@@ -65,7 +84,7 @@ function createPainter(scene: ExportScene, pixelRatio: number, opaqueBackground:
   const ctx = canvas.getContext('2d')
   if (!ctx) throw new Error('This browser refused a 2D canvas context.')
 
-  const { charMs } = getRevealTiming(
+  const { charMs, totalMs } = getRevealTiming(
     run.paths.length,
     scene.animation.speed,
     scene.animation.delayBetweenChars,
@@ -109,6 +128,17 @@ function createPainter(scene: ExportScene, pixelRatio: number, opaqueBackground:
         ctx.fill(new Path2D(glyph.d))
         ctx.restore()
       })
+
+      if (tipImage && elapsedMs >= 0 && elapsedMs < totalMs) {
+        const rawIndex = Math.floor(elapsedMs / charMs)
+        const index = Math.min(rawIndex, run.paths.length - 1)
+        const glyph = run.paths[index]
+        const progress = clamp((elapsedMs - index * charMs) / charMs, 0, 1)
+        const x = glyph.box.x1 + (glyph.box.x2 - glyph.box.x1) * progress
+        const y = (glyph.box.y1 + glyph.box.y2) / 2
+        const size = signature.fontSize * TIP_IMAGE_SCALE
+        ctx.drawImage(tipImage, x, y - size, size, size)
+      }
     },
   }
 }
@@ -150,7 +180,8 @@ function playFrames(painter: Painter, durationMs: number): Promise<void> {
 }
 
 export async function exportWebm(scene: ExportScene): Promise<void> {
-  const painter = createPainter(scene, 1, false)
+  const tipImage = await loadTipImage(scene)
+  const painter = createPainter(scene, 1, false, tipImage)
   const { totalMs } = getRevealTiming(
     scene.run.paths.length,
     scene.animation.speed,
@@ -188,7 +219,8 @@ export async function exportGif(scene: ExportScene): Promise<void> {
   ])
 
   // GIF has no partial transparency, so transparent signatures are flattened onto white.
-  const painter = createPainter(scene, 1, true)
+  const tipImage = await loadTipImage(scene)
+  const painter = createPainter(scene, 1, true, tipImage)
   const { totalMs } = getRevealTiming(
     scene.run.paths.length,
     scene.animation.speed,

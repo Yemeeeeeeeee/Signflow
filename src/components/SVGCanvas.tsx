@@ -6,7 +6,9 @@ import { useSignatureStore } from '../store/useSignatureStore'
 
 /** Bundled pen artwork used by the "pen" tip; sized against the signature's font size. */
 const PEN_IMAGE_SRC = '/pen-tip.png'
+const FEATHER_IMAGE_SRC = '/feather-tip.png'
 const PEN_IMAGE_SCALE = 1.1
+const FEATHER_IMAGE_SCALE = 1.1
 /** Which point of the image sits on the writing position: 0 = left/top, 1 = right/bottom. */
 const PEN_TIP_ANCHOR = { x: 0, y: 1 }
 
@@ -73,8 +75,8 @@ export function SVGCanvas() {
     return () => window.clearTimeout(timer)
   }, [isPlaying, loop, charCount, totalMs, cycle, updateAnimation])
 
-  const dotRadius = Math.max(1.5, fontSize * 0.035)
   const penSize = fontSize * PEN_IMAGE_SCALE
+  const featherSize = fontSize * FEATHER_IMAGE_SCALE
   const penRef = useRef<SVGGElement>(null)
 
   /**
@@ -210,7 +212,14 @@ export function SVGCanvas() {
                     preserveAspectRatio="xMidYMid meet"
                   />
                 ) : (
-                  <circle cx={0} cy={0} r={dotRadius} fill={fontColor} />
+                  <image
+                    href={FEATHER_IMAGE_SRC}
+                    x={-featherSize * PEN_TIP_ANCHOR.x}
+                    y={-featherSize * PEN_TIP_ANCHOR.y}
+                    width={featherSize}
+                    height={featherSize}
+                    preserveAspectRatio="xMidYMid meet"
+                  />
                 )}
               </g>
             ) : null}

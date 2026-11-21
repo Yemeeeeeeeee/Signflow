@@ -33,9 +33,9 @@ const INITIAL_SIGNATURE: SignatureConfig = {
 
 const INITIAL_ANIMATION: AnimationConfig = {
   isPlaying: false,
-  speed: 1,
+  speed: 0.5,
   loop: true,
-  delayBetweenChars: 120,
+  delayBetweenChars: 180,
   penTipStyle: 'none',
 }
 

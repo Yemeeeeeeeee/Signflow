@@ -4,11 +4,11 @@ import { useT, type StringKey } from '../lib/i18n'
 import { Slider } from './ui/slider'
 import { Panel } from './Panel'
 
-const PEN_TIPS = ['none', 'dot', 'pen'] as const
+const PEN_TIPS = ['none', 'feather', 'pen'] as const
 
 const PEN_TIP_KEYS: Record<(typeof PEN_TIPS)[number], StringKey> = {
   none: 'anim.penTip.none',
-  dot: 'anim.penTip.dot',
+  feather: 'anim.penTip.feather',
   pen: 'anim.penTip.pen',
 }
 
